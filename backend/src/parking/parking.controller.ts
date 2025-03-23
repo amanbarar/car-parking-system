@@ -2,7 +2,6 @@ import { Controller, Post, Patch, Get, Body, Param, Query } from '@nestjs/common
 import { BadRequestException, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { ParkingService } from './parking.service';
-// import { Car } from './entities/car.entity';
 
 import { ParkCarDto } from './dtos/park-car.dto';
 import { ClearSlotDto } from './dtos/clear-slot.dto';
@@ -12,6 +11,7 @@ import { GetSlotByRegDto } from './dtos/get-slot-by-reg.dto';
 import { GetSlotsByColorDto } from './dtos/get-slots-by-color.dto';
 import { CreateParkingLotDto } from './dtos/create-parking-lot.dto';
 import { GetOccupiedSlotsDto } from './dtos/get-occupied-slots.dto';
+import { GetVehiclesByColorDto } from './dtos/get-vehicles-by-color.dto';
 
 @Controller('parking-lots')
 export class ParkingController {
@@ -81,6 +81,13 @@ export class ParkingController {
     @UsePipes(new ValidationPipe())
     getSlotsByColor(@Param('lotId') lotId: string, @Query() query: GetSlotsByColorDto) {
         return { slots: this.parkingService.getSlotsByColor(lotId, query.color) };
+    }
+
+    // GET: VEHICLES WITH GIVEN COLOR
+    @Get(':lotId/vehicles-by-color')
+    @UsePipes(new ValidationPipe())
+    getVehiclesByColor(@Param('lotId') lotId: string, @Query() query: GetVehiclesByColorDto) {
+        return { slots: this.parkingService.getVehiclesByColor(lotId, query.color) };
     }
 
     // GET: SLOT NUMBER BY REGISTRATION NUMBER

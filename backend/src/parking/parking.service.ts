@@ -15,28 +15,10 @@ export class ParkingService {
         this.parkingLots.set(id, new ParkingLot(size));
     }
 
-    // getAllParkingLots() {
-    //     console.log('parkingLots object');
-    //     console.log(this.parkingLots);
-    //     console.log('parkingLots array');
-    //     console.log(Array.from(this.parkingLots));
-    //     return Array.from(this.parkingLots);
-    // }
-
     getAllParkingLots() {
         return Array.from(this.parkingLots, ([lotId, parkingLot]) => ({
             lotId,
-            totalSlots: parkingLot.getTotalSlots(),
-            occupiedSlots: Array.from(parkingLot.getOccupiedSlots().entries()).map(([slot, car]) => ({
-                slot,
-                car: car.toJSON()
-            })),
-            availableSlots: parkingLot.getAvailableSlots(),
-            // colorIndex: Object.fromEntries(parkingLot.getColorIndex().entries()),
-            colorIndex: Object.fromEntries(
-                Array.from(parkingLot.getColorIndex().entries()).map(([color, slots]) => [color, Array.from(slots)])
-            ),
-            regIndex: Object.fromEntries(parkingLot.getRegIndex().entries())
+            ...parkingLot.toJSON()
         }));
     }
 
@@ -67,7 +49,11 @@ export class ParkingService {
             slot,
             car
         }));
-        // return parkingLot.getOccupiedSlots();
+    }
+
+    getVehiclesByColor(lotId: string, color: string) {
+        const parkingLot = this.isParkingLot(lotId);
+        return parkingLot.getVehiclesByColor(color.toLowerCase());
     }
 
     getSlotsByColor(lotId: string, color: string) {

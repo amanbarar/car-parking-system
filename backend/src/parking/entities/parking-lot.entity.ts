@@ -26,10 +26,6 @@ export class ParkingLot {
 
     getOccupiedSlots() {
         return this.occupiedSlots;
-        // return Array.from(this.occupiedSlots.entries()).map(([slot, car]) => ({
-        //     slot,
-        //     car
-        // }));
     }
 
     getAvailableSlots(): number[] {
@@ -42,6 +38,17 @@ export class ParkingLot {
 
     getRegIndex(): Map<string, number> {
         return this.regIndex;
+    }
+
+    getVehiclesByColor(color: string): string[] {
+        if (!this.colorIndex.has(color)) {
+            return []; // ✅ No vehicles of this color found
+        }
+
+        return Array.from(this.colorIndex.get(color)!)
+            .map((slot) => this.occupiedSlots.get(slot))
+            .filter((car) => car !== undefined)
+            .map((car) => car.regNo);
     }
 
     getSlotsByColor(color: string): number[] {
@@ -99,7 +106,6 @@ export class ParkingLot {
         }
         const start = this.size + 1;
         for (let i = start; i < start + count; i++) {
-            // this.occupiedSlots.set(i, null);
             this.minHeap.push(i);
         }
         this.size += count;
@@ -123,5 +129,19 @@ export class ParkingLot {
         }
         this.size -= removedCount;
         return removedCount === count;
+    }
+
+    toJSON() {
+        return {
+            totalSlots: this.getTotalSlots(),
+            occupiedSlots: Array.from(this.occupiedSlots.entries()).map(([slot, car]) => ({
+                slot,
+                regNo: car.regNo,
+                color: car.color
+            })),
+            availableSlots: this.getAvailableSlots(),
+            colorIndex: Object.fromEntries(Array.from(this.colorIndex.entries()).map(([color, slots]) => [color, Array.from(slots)])),
+            regIndex: Object.fromEntries(this.regIndex.entries())
+        };
     }
 }
