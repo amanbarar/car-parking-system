@@ -31,7 +31,7 @@ The **API README** contains:
 - **Swagger Integration**: How to access the interactive API docs.
 - **Example requests and responses**.
 
-📌 **Read the full API documentation here:** [API_README.md](API_README.md)
+📌 **Read the full API documentation here:** [API_README.md](backend/API_README.md)
 
 ---
 📌 **Built with ❤️ using NestJS** 🚀
