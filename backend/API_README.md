@@ -11,12 +11,13 @@ This document provides an overview of all API endpoints in the **Car Parking Sys
   - [2️⃣ Get All Parking Lots](#2️⃣-get-all-parking-lots)
   - [3️⃣ Expand a Parking Lot](#3️⃣-expand-a-parking-lot)
   - [4️⃣ Shrink a Parking Lot](#4️⃣-shrink-a-parking-lot)
-  - [5️⃣ Park a Car](#5️⃣-park-a-car)
-  - [6️⃣ Get Occupied Slots](#6️⃣-get-occupied-slots)
-  - [7️⃣ Clear an Occupied Slot](#7️⃣-clear-an-occupied-slot)
-  - [8️⃣ Get Slot Numbers by Vehicle Color](#8️⃣-get-slot-numbers-by-vehicle-color)
-  - [9️⃣ Get Registration Numbers by Vehicle Color](#9️⃣-get-registration-numbers-by-vehicle-color)
-  - [🔟 Get Slot Number by Registration Number](#🔟-get-slot-number-by-registration-number)
+  - [5️⃣ Delete a Parking Lot](#5️⃣-delete-a-parking-lot)
+  - [6️⃣ Park a Car](#6️⃣-park-a-car)
+  - [7️⃣ Get Occupied Slots](#7️⃣-get-occupied-slots)
+  - [8️⃣ Clear an Occupied Slot](#8️⃣-clear-an-occupied-slot)
+  - [9️⃣ Get Slot Numbers by Vehicle Color](#9️⃣-get-slot-numbers-by-vehicle-color)
+  - [🔟 Get Registration Numbers by Vehicle Color](#🔟-get-registration-numbers-by-vehicle-color)
+  - [🔢 Get Slot Number by Registration Number](#🔢-get-slot-number-by-registration-number)
 - [📌 Notes](#-notes)
 - [🛠️ Contributing](#️-contributing)
 
@@ -51,29 +52,13 @@ POST /parking_lot/
 ```
 ---
 
-### **2️⃣ Get All Parking Lots**
+### **4️⃣ Shrink a Parking Lot**
 **Endpoint:**
 ```http
-GET /parking_lot/
+PATCH /parking_lot/{lotId}/shrink
 ```
-**Response:**
-```json
-{
-  "parkingLots": [
-    {
-      "lotId": "PL1",
-      "totalSlots": 5
-    }
-  ]
-}
-```
----
+**Description:** Reduces the number of available parking slots in an existing parking lot.
 
-### **3️⃣ Expand a Parking Lot**
-**Endpoint:**
-```http
-PATCH /parking_lot/{lotId}/expand
-```
 **Request Body:**
 ```json
 {
@@ -83,12 +68,41 @@ PATCH /parking_lot/{lotId}/expand
 **Response:**
 ```json
 {
-  "total_slot": 7
+  "total_slot": 3
+}
+```
+
+**Error Response:**
+```json
+{
+  "statusCode": 400,
+  "message": "Reduction size must be at least 1."
+}
+```
+
+### **5️⃣ Delete a Parking Lot**
+**Endpoint:**
+```http
+DELETE /parking_lot/{lotId}
+```
+**Description:** Deletes a parking lot by ID.
+
+**Response:**
+```json
+{
+  "message": "Parking lot PL1 deleted successfully."
+}
+```
+
+**Error Response (Invalid ID):**
+```json
+{
+  "statusCode": 404,
+  "message": "Parking lot with ID \"PL1\" not found.",
+  "error": "Not Found"
 }
 ```
 ---
-
-### **4️⃣ Shrink a Parking Lot**
 **Endpoint:**
 ```http
 PATCH /parking_lot/{lotId}/shrink
@@ -107,7 +121,7 @@ PATCH /parking_lot/{lotId}/shrink
 ```
 ---
 
-### **5️⃣ Park a Car**
+### **6️⃣ Park a Car**
 **Endpoint:**
 ```http
 POST /parking_lot/{lotId}/park
@@ -125,82 +139,6 @@ POST /parking_lot/{lotId}/park
   "allocated_slot_number": 1
 }
 ```
----
-
-### **6️⃣ Get Occupied Slots**
-**Endpoint:**
-```http
-GET /parking_lot/{lotId}/status
-```
-**Response:**
-```json
-[
-  {
-    "slot": 1,
-    "regNo": "UP-14-DC-1987",
-    "color": "Black"
-  }
-]
-```
----
-
-### **7️⃣ Clear an Occupied Slot**
-**Endpoint:**
-```http
-POST /parking_lot/{lotId}/clear
-```
-**Request Body:**
-```json
-{
-  "slotNumber": 1
-}
-```
-**Response:**
-```json
-{
-  "freed_slot_number": 1
-}
-```
----
-
-### **8️⃣ Get Slot Numbers by Vehicle Color**
-**Endpoint:**
-```http
-GET /parking_lot/{lotId}/slot_numbers?color=Black
-```
-**Response:**
-```json
-{
-  "slots": [1, 2]
-}
-```
----
-
-### **9️⃣ Get Registration Numbers by Vehicle Color**
-**Endpoint:**
-```http
-GET /parking_lot/{lotId}/registration_numbers?color=Black
-```
-**Response:**
-```json
-{
-  "slots": ["UP-14-DC-1987", "DL-02-AB-5678"]
-}
-```
----
-
-### **🔟 Get Slot Number by Registration Number**
-**Endpoint:**
-```http
-GET /parking_lot/{lotId}/registration_number?regNo=UP-14-DC-1987
-```
-**Response:**
-```json
-{
-  "slot": 1
-}
-```
-
 ---
 
 ## 📌 Notes
