@@ -50,8 +50,7 @@ export class ParkingController {
     @ApiResponse({ status: 400, description: 'Bad request' })
     @UsePipes(new ValidationPipe())
     expandParkingLot(@Param('lotId') lotId: string, @Body() body: ExpandParkingLotDto) {
-        this.parkingService.expandParkingLot(lotId, body.size);
-        return { message: `Expanded by ${body.size} slots` };
+        return this.parkingService.expandParkingLot(lotId, body.size);
     }
 
     @Patch(':lotId/shrink')
@@ -61,8 +60,7 @@ export class ParkingController {
     @ApiResponse({ status: 400, description: 'Bad request' })
     @UsePipes(new ValidationPipe())
     shrinkParkingLot(@Param('lotId') lotId: string, @Body() body: ShrinkParkingLotDto) {
-        this.parkingService.shrinkParkingLot(lotId, body.size);
-        return { message: `Parking lot shrunk by ${body.size} slots` };
+        return this.parkingService.shrinkParkingLot(lotId, body.size);
     }
 
     @Post(':lotId/park')
@@ -92,7 +90,7 @@ export class ParkingController {
     @ApiResponse({ status: 400, description: 'Bad request' })
     @UsePipes(new ValidationPipe())
     clearSlot(@Param('lotId') lotId: string, @Body() body: ClearSlotDto) {
-        this.parkingService.freeSlot(lotId, body.slotNumber);
+        this.parkingService.clearSlot(lotId, body.slotNumber);
         return { freed_slot_number: body.slotNumber };
     }
 
@@ -125,7 +123,7 @@ export class ParkingController {
     @ApiResponse({ status: 200, description: 'Slot number retrieved' })
     @ApiResponse({ status: 400, description: 'Bad request' })
     @UsePipes(new ValidationPipe())
-    getSlotByReg(@Param('lotId') lotId: string, @Query() query: GetSlotByRegDto) {
-        return { slot: this.parkingService.getSlotByReg(lotId, query.regNo) };
+    getSlotByRegNo(@Param('lotId') lotId: string, @Query() query: GetSlotByRegDto) {
+        return { slot: this.parkingService.getSlotByRegNo(lotId, query.regNo) };
     }
 }
