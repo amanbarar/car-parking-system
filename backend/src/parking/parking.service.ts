@@ -38,9 +38,9 @@ export class ParkingService {
         return parkingLot.allocateSlot(car);
     }
 
-    freeSlot(lotId: string, slotNumber: number) {
+    clearSlot(lotId: string, slotNumber: number) {
         const parkingLot = this.isParkingLot(lotId);
-        return parkingLot.freeSlot(slotNumber);
+        return parkingLot.clearSlot(slotNumber);
     }
 
     getOccupiedSlots(lotId: string) {
@@ -58,24 +58,15 @@ export class ParkingService {
 
     getSlotsByColor(lotId: string, color: string) {
         const parkingLot = this.isParkingLot(lotId);
-
-        const slots = parkingLot.getSlotsByColor(color.toLowerCase());
-
-        if (slots.length === 0) {
-            throw new NotFoundException(`No cars with color "${color}" found.`);
-        }
-
-        return this.parkingLots.get(lotId)?.getSlotsByColor(color.toLowerCase());
+        return parkingLot.getSlotsByColor(color.toLowerCase());
     }
 
-    getSlotByReg(lotId: string, regNo: string): number {
+    getSlotByRegNo(lotId: string, regNo: string): number {
         const parkingLot = this.isParkingLot(lotId);
-        const slot = parkingLot.getSlotByReg(regNo.toLowerCase());
-
+        const slot = parkingLot.getSlotByRegNo(regNo.toLowerCase());
         if (slot === null) {
             throw new NotFoundException(`No car with registration number "${regNo}" found.`);
         }
-
         return slot;
     }
 
