@@ -115,7 +115,7 @@ export class ParkingLot {
         if (count <= 0) {
             throw new BadRequestException('Slot reduction count must be greater than zero.');
         }
-        if (count > this.occupiedSlots.size) {
+        if (count > this.size) {
             throw new BadRequestException('Cannot remove more slots than currently exist.');
         }
         if (count > this.minHeap.length) {
