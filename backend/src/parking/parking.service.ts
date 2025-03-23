@@ -82,7 +82,6 @@ export class ParkingService {
     isParkingLot(lotId: string) {
         const parkingLot = this.parkingLots.get(lotId);
         if (!parkingLot) {
-            console.log('Parking lot not found');
             throw new NotFoundException(`Parking lot with ID "${lotId}" not found.`);
         }
         return parkingLot;

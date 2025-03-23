@@ -81,7 +81,6 @@ export class ParkingLot {
         }
         this.colorIndex.get(color)!.add(slotNumber);
 
-        console.log(this);
         return slotNumber;
     }
 
