@@ -13,7 +13,7 @@ import { CreateParkingLotDto } from './dtos/create-parking-lot.dto';
 import { GetOccupiedSlotsDto } from './dtos/get-occupied-slots.dto';
 import { GetVehiclesByColorDto } from './dtos/get-vehicles-by-color.dto';
 
-@Controller('parking-lots')
+@Controller('parking_lot/')
 export class ParkingController {
     constructor(private readonly parkingService: ParkingService) {}
 
@@ -69,29 +69,29 @@ export class ParkingController {
         return { freed_slot_number: body.slotNumber };
     }
 
-    // GET: OCCUPIED SLOTS OF A PARKING LOT
-    @Get(':lotId/occupied-slots')
+    // GET: FETCH ALL OCCUPIED SLOTS OF A PARKING LOT
+    @Get(':lotId/status')
     @UsePipes(new ValidationPipe())
     getOccupiedSlots(@Param() params: GetOccupiedSlotsDto) {
         return this.parkingService.getOccupiedSlots(params.lotId);
     }
 
     // GET: SLOTS WITH GIVEN COLOR
-    @Get(':lotId/slots-by-color')
+    @Get(':lotId/slot_numbers')
     @UsePipes(new ValidationPipe())
     getSlotsByColor(@Param('lotId') lotId: string, @Query() query: GetSlotsByColorDto) {
         return { slots: this.parkingService.getSlotsByColor(lotId, query.color) };
     }
 
     // GET: VEHICLES WITH GIVEN COLOR
-    @Get(':lotId/vehicles-by-color')
+    @Get(':lotId/registration_numbers')
     @UsePipes(new ValidationPipe())
     getVehiclesByColor(@Param('lotId') lotId: string, @Query() query: GetVehiclesByColorDto) {
         return { slots: this.parkingService.getVehiclesByColor(lotId, query.color) };
     }
 
     // GET: SLOT NUMBER BY REGISTRATION NUMBER
-    @Get(':lotId/slot-by-reg')
+    @Get(':lotId/registration_number')
     @UsePipes(new ValidationPipe())
     getSlotByReg(@Param('lotId') lotId: string, @Query() query: GetSlotByRegDto) {
         return { slot: this.parkingService.getSlotByReg(lotId, query.regNo) };
