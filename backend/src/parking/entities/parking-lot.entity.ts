@@ -24,7 +24,7 @@ export class ParkingLot {
         return this.size;
     }
 
-    getOccupiedSlots() {
+    getOccupiedSlots(): Map<number, Car> {
         return this.occupiedSlots;
     }
 
@@ -42,7 +42,7 @@ export class ParkingLot {
 
     getVehiclesByColor(color: string): string[] {
         if (!this.colorIndex.has(color)) {
-            return []; // ✅ No vehicles of this color found
+            return [];
         }
 
         return Array.from(this.colorIndex.get(color)!)
@@ -55,11 +55,12 @@ export class ParkingLot {
         return Array.from(this.colorIndex.get(color.toLowerCase()) ?? []);
     }
 
-    getSlotByReg(regNo: string): number | null {
+    getSlotByRegNo(regNo: string): number | null {
         return this.regIndex.get(regNo.toLowerCase()) ?? null;
     }
 
     allocateSlot(car: Car): number | null {
+        if (this.minHeap.length === 0) throw new BadRequestException('The parking lot is already full.');
         if (!car.regNo || !car.color) {
             throw new BadRequestException('Car registration number and color are required.');
         }
@@ -84,7 +85,7 @@ export class ParkingLot {
         return slotNumber;
     }
 
-    freeSlot(slotNumber: number): boolean {
+    clearSlot(slotNumber: number): boolean {
         if (!this.occupiedSlots.has(slotNumber)) {
             throw new BadRequestException('No car is parked in this slot.');
         }
@@ -99,7 +100,7 @@ export class ParkingLot {
         return true;
     }
 
-    expandSlots(count: number) {
+    expandSlots(count: number): number {
         if (count <= 0) {
             throw new BadRequestException('Slot expansion count must be greater than zero.');
         }
@@ -108,9 +109,10 @@ export class ParkingLot {
             this.minHeap.push(i);
         }
         this.size += count;
+        return this.size;
     }
 
-    shrinkSlots(count: number): boolean {
+    shrinkSlots(count: number): number {
         if (count <= 0) {
             throw new BadRequestException('Slot reduction count must be greater than zero.');
         }
@@ -127,7 +129,7 @@ export class ParkingLot {
             removedCount++;
         }
         this.size -= removedCount;
-        return removedCount === count;
+        return this.size;
     }
 
     toJSON() {
