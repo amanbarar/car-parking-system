@@ -58,6 +58,17 @@ describe('ParkingService', () => {
         expect(() => service.shrinkParkingLot('lotA', 0)).toThrow(BadRequestException);
     });
 
+    it('should delete a parking lot successfully', () => {
+        service.createParkingLot('lotA', 5);
+
+        expect(service.deleteParkingLot('lotA')).toBe('Parking lot lotA deleted successfully.');
+        expect(service['parkingLots'].has('lotA')).toBe(false);
+    });
+
+    it('should throw NotFoundException if the parking lot does not exist', () => {
+        expect(() => service.deleteParkingLot('INVALID_ID')).toThrow(NotFoundException);
+    });
+
     it('should park a car and allocate a slot', () => {
         service.createParkingLot('lotA', 5);
         const allocatedSlot = service.parkCar('lotA', 'KA-01-1234', 'red');

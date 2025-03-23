@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ParkingController } from '../../src/parking/parking.controller';
 import { ParkingService } from '../../src/parking/parking.service';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import { BadRequestException } from '@nestjs/common';
 
 describe('ParkingController', () => {
     let controller: ParkingController;
@@ -20,6 +20,7 @@ describe('ParkingController', () => {
                         getAllParkingLots: jest.fn().mockReturnValue([{ lotId: 'lotA', totalSlots: 5 }]),
                         expandParkingLot: jest.fn().mockReturnValue({ total_slot: 8 }),
                         shrinkParkingLot: jest.fn().mockReturnValue({ total_slot: 2 }),
+                        deleteParkingLot: jest.fn().mockReturnValue('Parking lot lotA deleted successfully'),
                         parkCar: jest.fn().mockReturnValue(1),
                         clearSlot: jest.fn().mockReturnValue({ freed_slot_number: 1 }),
                         getOccupiedSlots: jest.fn().mockReturnValue([
@@ -70,6 +71,12 @@ describe('ParkingController', () => {
     it('should shrink a parking lot', () => {
         expect(controller.shrinkParkingLot('lotA', { size: 3 })).toEqual({
             total_slot: 2
+        });
+    });
+
+    it('should delete a parking lot', () => {
+        expect(controller.deleteParkingLot('lotA')).toEqual({
+            message: 'Parking lot lotA deleted successfully'
         });
     });
 
