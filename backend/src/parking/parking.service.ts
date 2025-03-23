@@ -32,6 +32,14 @@ export class ParkingService {
         return parkingLot.shrinkSlots(size);
     }
 
+    deleteParkingLot(lotId: string): string {
+        if (!this.parkingLots.has(lotId)) {
+            throw new NotFoundException(`Parking lot with ID "${lotId}" not found.`);
+        }
+        this.parkingLots.delete(lotId);
+        return `Parking lot ${lotId} deleted successfully.`;
+    }
+
     parkCar(lotId: string, regNo: string, color: string) {
         const parkingLot = this.isParkingLot(lotId);
         const car = new Car(regNo, color);

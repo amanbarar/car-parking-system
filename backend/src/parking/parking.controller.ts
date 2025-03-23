@@ -1,4 +1,4 @@
-import { Controller, Post, Patch, Get, Body, Param, Query } from '@nestjs/common';
+import { Controller, Post, Patch, Get, Delete, Body, Param, Query } from '@nestjs/common';
 import { BadRequestException, UsePipes, ValidationPipe } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 
@@ -61,6 +61,16 @@ export class ParkingController {
     @UsePipes(new ValidationPipe())
     shrinkParkingLot(@Param('lotId') lotId: string, @Body() body: ShrinkParkingLotDto) {
         return this.parkingService.shrinkParkingLot(lotId, body.size);
+    }
+
+    @Delete(':lotId')
+    @ApiOperation({ summary: 'Delete a parking lot' })
+    @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
+    @ApiResponse({ status: 200, description: 'Parking lot deleted successfully' })
+    @ApiResponse({ status: 404, description: 'Parking lot not found' })
+    deleteParkingLot(@Param('lotId') lotId: string): { message: string } {
+        const result: string = this.parkingService.deleteParkingLot(lotId);
+        return { message: result };
     }
 
     @Post(':lotId/park')
