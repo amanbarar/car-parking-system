@@ -1,12 +1,10 @@
 import { BadRequestException } from '@nestjs/common';
 
-import { ParkingSlot } from './parking-slot.entity';
 import { Car } from './car.entity';
 
 export class ParkingLot {
-    // private slots: ParkingSlot[];
-    private occupiedSlots: Map<number, Car | null>;
     private size: number;
+    private occupiedSlots: Map<number, Car>;
     private minHeap: number[];
     private colorIndex: Map<string, Set<number>>;
     private regIndex: Map<string, number>;
@@ -15,18 +13,44 @@ export class ParkingLot {
         if (size <= 0) {
             throw new BadRequestException('Parking lot size must be greater than zero.');
         }
-        // this.slots = Array.from({ length: size }, (_, i) => new ParkingSlot(i + 1));
         this.size = size;
-        // this.occupiedSlots = new Map(Array.from({ length: size }, (_, i) => [i + 1, null]));
         this.occupiedSlots = new Map();
         this.minHeap = Array.from({ length: size }, (_, i) => i + 1);
         this.colorIndex = new Map();
         this.regIndex = new Map();
     }
 
-    // public getSlots() {
-    //     return this.slots;
-    // }
+    getTotalSlots(): number {
+        return this.size;
+    }
+
+    getOccupiedSlots() {
+        return this.occupiedSlots;
+        // return Array.from(this.occupiedSlots.entries()).map(([slot, car]) => ({
+        //     slot,
+        //     car
+        // }));
+    }
+
+    getAvailableSlots(): number[] {
+        return this.minHeap;
+    }
+
+    getColorIndex(): Map<string, Set<number>> {
+        return this.colorIndex;
+    }
+
+    getRegIndex(): Map<string, number> {
+        return this.regIndex;
+    }
+
+    getSlotsByColor(color: string): number[] {
+        return Array.from(this.colorIndex.get(color.toLowerCase()) ?? []);
+    }
+
+    getSlotByReg(regNo: string): number | null {
+        return this.regIndex.get(regNo.toLowerCase()) ?? null;
+    }
 
     allocateSlot(car: Car): number | null {
         if (!car.regNo || !car.color) {
@@ -42,7 +66,6 @@ export class ParkingLot {
         }
 
         const slotNumber = this.minHeap.shift()!;
-        // this.slots
         this.occupiedSlots.set(slotNumber, new Car(regNo, color));
         this.regIndex.set(regNo, slotNumber);
 
@@ -51,9 +74,6 @@ export class ParkingLot {
         }
         this.colorIndex.get(color)!.add(slotNumber);
 
-        console.log(this.occupiedSlots);
-        console.log(this.regIndex);
-        console.log(this.colorIndex);
         console.log(this);
         return slotNumber;
     }
@@ -72,17 +92,6 @@ export class ParkingLot {
 
         return true;
     }
-
-    // expandSlots(count: number) {
-    //     if (count <= 0) {
-    //         throw new Error('Slot expansion count must be greater than zero.');
-    //     }
-    //     const start = this.slots.length + 1;
-    //     for (let i = start; i < start + count; i++) {
-    //         this.slots.push(new ParkingSlot(i));
-    //         this.minHeap.push(i);
-    //     }
-    // }
 
     expandSlots(count: number) {
         if (count <= 0) {
@@ -109,26 +118,10 @@ export class ParkingLot {
         let removedCount = 0;
         while (removedCount < count && this.minHeap.length > 0) {
             const lastSlot = this.minHeap.pop()!;
-            // this.slots = this.slots.filter((slot) => slot.slotNumber !== lastSlot);
             this.occupiedSlots.delete(lastSlot);
             removedCount++;
         }
         this.size -= removedCount;
         return removedCount === count;
-    }
-
-    getOccupiedSlots() {
-        return Array.from(this.occupiedSlots.entries()).map(([slot, car]) => ({
-            slot,
-            car
-        }));
-    }
-
-    getSlotsByColor(color: string): number[] {
-        return Array.from(this.colorIndex.get(color.toLowerCase()) ?? []);
-    }
-
-    getSlotByReg(regNo: string): number | null {
-        return this.regIndex.get(regNo.toLowerCase()) ?? null;
     }
 }

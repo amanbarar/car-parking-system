@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { NotFoundException, BadRequestException } from '@nestjs/common';
+
 import { ParkingLot } from './entities/parking-lot.entity';
 import { Car } from './entities/car.entity';
-import { isInstance } from 'class-validator';
 
 @Injectable()
 export class ParkingService {
@@ -15,13 +15,29 @@ export class ParkingService {
         this.parkingLots.set(id, new ParkingLot(size));
     }
 
+    // getAllParkingLots() {
+    //     console.log('parkingLots object');
+    //     console.log(this.parkingLots);
+    //     console.log('parkingLots array');
+    //     console.log(Array.from(this.parkingLots));
+    //     return Array.from(this.parkingLots);
+    // }
+
     getAllParkingLots() {
-        // return Array.from(this.parkingLots.keys());
-        // return Array.from(this.parkingLots, ([parkingLot, details]) => ({
-        //     parkingLot,
-        //     totalSlots: details.getSlots().length
-        // }));
-        return Array.from(this.parkingLots);
+        return Array.from(this.parkingLots, ([lotId, parkingLot]) => ({
+            lotId,
+            totalSlots: parkingLot.getTotalSlots(),
+            occupiedSlots: Array.from(parkingLot.getOccupiedSlots().entries()).map(([slot, car]) => ({
+                slot,
+                car: car.toJSON()
+            })),
+            availableSlots: parkingLot.getAvailableSlots(),
+            // colorIndex: Object.fromEntries(parkingLot.getColorIndex().entries()),
+            colorIndex: Object.fromEntries(
+                Array.from(parkingLot.getColorIndex().entries()).map(([color, slots]) => [color, Array.from(slots)])
+            ),
+            regIndex: Object.fromEntries(parkingLot.getRegIndex().entries())
+        }));
     }
 
     expandParkingLot(lotId: string, size: number) {
@@ -47,7 +63,11 @@ export class ParkingService {
 
     getOccupiedSlots(lotId: string) {
         const parkingLot = this.isParkingLot(lotId);
-        return parkingLot.getOccupiedSlots();
+        return Array.from(parkingLot.getOccupiedSlots().entries()).map(([slot, car]) => ({
+            slot,
+            car
+        }));
+        // return parkingLot.getOccupiedSlots();
     }
 
     getSlotsByColor(lotId: string, color: string) {
@@ -76,6 +96,7 @@ export class ParkingService {
     isParkingLot(lotId: string) {
         const parkingLot = this.parkingLots.get(lotId);
         if (!parkingLot) {
+            console.log('Parking lot not found');
             throw new NotFoundException(`Parking lot with ID "${lotId}" not found.`);
         }
         return parkingLot;

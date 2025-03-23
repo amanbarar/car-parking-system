@@ -1,17 +1,8 @@
-import {
-    Controller,
-    Post,
-    Patch,
-    Get,
-    Body,
-    Param,
-    BadRequestException,
-    UsePipes,
-    ValidationPipe
-} from '@nestjs/common';
+import { Controller, Post, Patch, Get, Body, Param, Query } from '@nestjs/common';
+import { BadRequestException, UsePipes, ValidationPipe } from '@nestjs/common';
 
 import { ParkingService } from './parking.service';
-import { Car } from './entities/car.entity';
+// import { Car } from './entities/car.entity';
 
 import { ParkCarDto } from './dtos/park-car.dto';
 import { ClearSlotDto } from './dtos/clear-slot.dto';
@@ -27,7 +18,7 @@ export class ParkingController {
     constructor(private readonly parkingService: ParkingService) {}
 
     // POST: TO CREATE A NEW PARKING LOT
-    @Post() 
+    @Post()
     @UsePipes(new ValidationPipe())
     createParkingLot(@Body() body: CreateParkingLotDto) {
         try {
@@ -39,6 +30,12 @@ export class ParkingController {
             }
             throw new BadRequestException('An unexpected error occurred.');
         }
+    }
+
+    // GET: GET ALL PARKING LOTS
+    @Get()
+    getAllParkingLots() {
+        return { parkingLots: this.parkingService.getAllParkingLots() };
     }
 
     // PATCH: EXPAND EXISTING PARKING LOT(S)
@@ -72,39 +69,24 @@ export class ParkingController {
         return { freed_slot_number: body.slotNumber };
     }
 
-    // GET: GET ALL PARKING LOTS
-    @Get('lots')
-    getAllParkingLots() {
-        return { parkingLots: this.parkingService.getAllParkingLots() };
-    }
-
-    @Get(':lotId/status')
+    // GET: OCCUPIED SLOTS OF A PARKING LOT
+    @Get(':lotId/occupied-slots')
     @UsePipes(new ValidationPipe())
     getOccupiedSlots(@Param() params: GetOccupiedSlotsDto) {
         return this.parkingService.getOccupiedSlots(params.lotId);
     }
 
-    @Get(':lotId/slots-by-color/:color')
+    // GET: SLOTS WITH GIVEN COLOR
+    @Get(':lotId/slots-by-color')
     @UsePipes(new ValidationPipe())
-    getSlotsByColor(@Param() params: GetSlotsByColorDto & { lotId: string }) {
-        return { slots: this.parkingService.getSlotsByColor(params.lotId, params.color) };
+    getSlotsByColor(@Param('lotId') lotId: string, @Query() query: GetSlotsByColorDto) {
+        return { slots: this.parkingService.getSlotsByColor(lotId, query.color) };
     }
 
-    // @Get(':lotId/slots-by-color/:color')
-    // @UsePipes(new ValidationPipe())
-    // getSlotsByColor(@Param() params: GetSlotsByColorDto) {
-    //     return { slots: this.parkingService.getSlotsByColor(params.lotId, params.color) };
-    // }
-
-    @Get(':lotId/slot-by-reg/:regNo')
+    // GET: SLOT NUMBER BY REGISTRATION NUMBER
+    @Get(':lotId/slot-by-reg')
     @UsePipes(new ValidationPipe())
-    getSlotByReg(@Param() params: GetSlotByRegDto & { lotId: string }) {
-        return { slot: this.parkingService.getSlotByReg(params.lotId, params.regNo) };
+    getSlotByReg(@Param('lotId') lotId: string, @Query() query: GetSlotByRegDto) {
+        return { slot: this.parkingService.getSlotByReg(lotId, query.regNo) };
     }
-
-    // @Get(':lotId/slot-by-reg/:regNo')
-    // @UsePipes(new ValidationPipe())
-    // getSlotByReg(@Param() params: GetSlotByRegDto) {
-    //     return { slot: this.parkingService.getSlotByReg(params.lotId, params.regNo) };
-    // }
 }
