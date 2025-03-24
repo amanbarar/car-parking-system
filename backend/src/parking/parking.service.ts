@@ -32,7 +32,7 @@ export class ParkingService {
     // Returns the total slots of the parking lot
     expandParkingLot(lotId: string, size: number) {
         const parkingLot = this.isParkingLot(lotId);
-        return parkingLot.expandSlots(size);
+        return { total_slots: parkingLot.expandSlots(size) };
     }
 
     // Method to shrink the parking lot
@@ -40,7 +40,7 @@ export class ParkingService {
     // Returns the total slots of the parking lot
     shrinkParkingLot(lotId: string, size: number) {
         const parkingLot = this.isParkingLot(lotId);
-        return parkingLot.shrinkSlots(size);
+        return { total_slots: parkingLot.shrinkSlots(size) };
     }
 
     // Method to delete a parking lot
