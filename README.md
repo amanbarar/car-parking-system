@@ -20,7 +20,7 @@ The **Project README** contains:
 - **Docker support**: Instructions to run the project using Docker.
 - **Contributing guidelines**.
 
-📌 **Read the full project documentation here:** [README.md](README.md)
+📌 **Read the full project documentation here:** [README.md](backend/README.md)
 
 ---
 ## 📜 API README
