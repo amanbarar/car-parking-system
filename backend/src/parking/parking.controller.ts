@@ -14,11 +14,16 @@ import { CreateParkingLotDto } from './dtos/create-parking-lot.dto';
 import { GetOccupiedSlotsDto } from './dtos/get-occupied-slots.dto';
 import { GetVehiclesByColorDto } from './dtos/get-vehicles-by-color.dto';
 
+// Controller class to handle all the parking lot operations
+// This class is responsible for handling the incoming requests and returning the response
 @ApiTags('Parking Lot')
 @Controller('parking_lot/')
 export class ParkingController {
     constructor(private readonly parkingService: ParkingService) {}
 
+    // POST method to create a new parking lot
+    // Takes the ID of the parking lot and the size of the parking lot as parameters
+    // Returns a success message
     @Post()
     @ApiOperation({ summary: 'Create a new parking lot' })
     @ApiResponse({ status: 201, description: 'Parking lot created successfully' })
@@ -36,6 +41,8 @@ export class ParkingController {
         }
     }
 
+    // GET method to get all the parking lots
+    // Returns an array of parking lots with their details
     @Get()
     @ApiOperation({ summary: 'Get all parking lots' })
     @ApiResponse({ status: 200, description: 'List of parking lots' })
@@ -43,6 +50,9 @@ export class ParkingController {
         return { parkingLots: this.parkingService.getAllParkingLots() };
     }
 
+    // PATCH method to expand an existing parking lot
+    // Takes the ID of the parking lot and the size to expand as parameters
+    // Returns the total slots of the parking lot
     @Patch(':lotId/expand')
     @ApiOperation({ summary: 'Expand an existing parking lot' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -53,6 +63,9 @@ export class ParkingController {
         return this.parkingService.expandParkingLot(lotId, body.size);
     }
 
+    // PATCH method to shrink an existing parking lot
+    // Takes the ID of the parking lot and the size to shrink as parameters
+    // Returns the total slots of the parking lot
     @Patch(':lotId/shrink')
     @ApiOperation({ summary: 'Shrink an existing parking lot' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -63,6 +76,9 @@ export class ParkingController {
         return this.parkingService.shrinkParkingLot(lotId, body.size);
     }
 
+    // DELETE method to delete a parking lot
+    // Takes the ID of the parking lot as a parameter
+    // Returns a success message
     @Delete(':lotId')
     @ApiOperation({ summary: 'Delete a parking lot' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -73,6 +89,9 @@ export class ParkingController {
         return { message: result };
     }
 
+    // POST method to park a car in the parking lot
+    // Takes the ID of the parking lot, registration number and color of the car as parameters
+    // Returns the slot number where the car is parked
     @Post(':lotId/park')
     @ApiOperation({ summary: 'Park a vehicle' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -83,6 +102,9 @@ export class ParkingController {
         return { allocated_slot_number: this.parkingService.parkCar(lotId, body.regNo, body.color) };
     }
 
+    // GET method to get all the occupied slots of a parking lot
+    // Takes the ID of the parking lot as a parameter
+    // Returns an array of occupied slots with the car details
     @Get(':lotId/status')
     @ApiOperation({ summary: 'Get occupied slots' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -93,6 +115,9 @@ export class ParkingController {
         return this.parkingService.getOccupiedSlots(params.lotId);
     }
 
+    // POST method to clear an occupied slot
+    // Takes the ID of the parking lot and the slot number as parameters
+    // Returns the slot number that was cleared
     @Post(':lotId/clear')
     @ApiOperation({ summary: 'Clear an occupied slot' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -104,6 +129,9 @@ export class ParkingController {
         return { freed_slot_number: body.slotNumber };
     }
 
+    // GET method to get all the empty slots of a parking lot
+    // Takes the ID of the parking lot as a parameter
+    // Returns an array of empty slots
     @Get(':lotId/slot_numbers')
     @ApiOperation({ summary: 'Get slot numbers by vehicle color' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -115,6 +143,9 @@ export class ParkingController {
         return { slots: this.parkingService.getSlotsByColor(lotId, query.color) };
     }
 
+    // GET method to get all the registration numbers of a parking lot by color
+    // Takes the ID of the parking lot and the color as parameters
+    // Returns an array of registration numbers
     @Get(':lotId/registration_numbers')
     @ApiOperation({ summary: 'Get registration numbers by vehicle color' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
@@ -126,6 +157,9 @@ export class ParkingController {
         return { slots: this.parkingService.getVehiclesByColor(lotId, query.color) };
     }
 
+    // GET method to get the slot number by registration number
+    // Takes the ID of the parking lot and the registration number as parameters
+    // Returns the slot number where the car is parked
     @Get(':lotId/registration_number')
     @ApiOperation({ summary: 'Get slot number by registration number' })
     @ApiParam({ name: 'lotId', description: 'Parking lot ID' })
